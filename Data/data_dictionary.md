@@ -1,0 +1,84 @@
+# Data Dictionary
+
+- Patient info:
+    - `subject_id`: Unique identifier which specifies an individual patient
+    - `gender`: Genotypical sex of the patient
+- Admissions info: Documented at the most recent hospital admission
+    - `age`
+    - `insurance`
+    - `language`
+    - `marital_status`
+    - `race`
+- Morbidities: Indicators for whether a patient was ever diagnosed with the disease
+    - `heart_failure`
+    - `hypertension`
+    - `atrial_fibrillation`
+    - `diabetes_type_1`
+    - `diabetes_type_2`
+    - `copd`: Chronic Obstructive Pulmonary Disease
+    - `asthma`
+    - `liver_disease`
+    - `ckd`: Chronic Kidney Disease
+    - `cancer`: Malignant Neoplasms
+    - `depression`
+    - `osteoarthritis`
+    - `anemia` 
+- Medication history: Indicators for whether a patient was ever prescribed the medication
+    - ACE Inhibitors:
+        - `enalapril`
+        - `lisinopril`
+        - `ramipril`
+    - Beta-Blockers:
+        - `carvedilol`
+        - `metoprolol_succinate`
+        - `bisoprolol`
+    - Diuretics:
+        - `furosemide`
+        - `bumetanide`
+        - `spironolactone`
+    - Anticoagulants:
+        - `warfarin`
+        - `apixaban`
+        - `rivaroxaban`
+- Vital signs and lab measurements: The last measurement recorded for a patient. Lab tests are measured from serum.
+    - `bp_systolic`: Systolic blood pressure
+    - `bp_diastolic`: Diastolic blood pressure
+    - `oxygen`: Blood oxygen saturation (%)
+    - `nt_probnp`: (pg/mL)
+    - `creatinine`: (mg/dL)
+    - `bun`: Blood urea nitrogen (mg/dL)
+    - `sodium`: (mEq/L)
+    - `potassium`: (mEq/L)
+    - `ast`: Aspartate transaminase (IU/L)
+    - `alt`: Alanine transaminase (IU/L)
+    - `troponin`: Troponin T (ng/mL)
+    - Complete blood count
+        - `rbc`: Red blood cell count (10^6 cells / μL)
+        - `hgb`: Hemoglobin concentration (g/dL)
+        - `hct`: Hematocrit (%)
+        - `mcv`: Mean corpuscular volume (fL)
+        - `mch`: Mean corpuscular hemoglobin (pg/cell)
+        - `mchc`: Mean corpuscular hemoglobin concentration (g/dL or %)
+        - `rdw`: Red blood cell distribution width (%)
+        - `plt`: Platelet count (10^3 cells / μL)
+        - `wbc`: White blood cell count (10^3 cells / μL)
+        - White blood cell differential: (%)
+            - `neutrophil_p`
+            - `lymphocyte_p`
+            - `monocyte_p`
+            - `eosinophil_p`
+            - `basophil_p`
+            - `immature_gran_p`: Immature granulocytes
+        - White blood cell subtype counts: (10^3 cells / μL)
+            - `neutrophil_c`
+            - `lymphocyte_c`
+            - `monocyte_c`
+            - `eosinophil_c`
+            - `basophil_c`
+
+Some variables are not found in the MIMIC-IV hosp dataset:
+
+- Heart rate
+- Smoking history
+- Alcohol use
+- Mean Platelet Volume

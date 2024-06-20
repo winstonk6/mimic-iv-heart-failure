@@ -1,0 +1,63 @@
+---
+title: "MIMIC-IV hosp Heart Failure Data"
+author: "Winston Koh"
+format: 
+  html:
+    toc: true
+    embed-resources: true
+---
+
+```{r setup}
+#| output: false
+
+library(arrow)
+library(data.table)
+library(tidyverse)
+library(gtsummary)
+library(compareGroups)
+
+set.seed(100)
+```
+
+```{r data}
+is_binary <- function(x) {
+  if(is.numeric(x)){
+    if(max(x, na.rm = TRUE) == 1 & min(x, na.rm = TRUE) == 0 & length(unique(x[!is.na(x)])) >= 2) {
+      TRUE
+    } else {
+      FALSE
+    }
+  } else {
+    FALSE
+  }
+}
+
+data <- read_parquet("C:/Users/Winston/mimic-iv-2.2/mimic4_hosp_dataset_patients.parquet") |> 
+  select(-c(subject_id)) |> 
+  mutate(across(where(is.character), as.factor),
+         across(where(is_binary), as.factor),
+         # Set largest groups as reference
+         gender = fct_relevel(gender, "F"),
+         insurance = fct_relevel(insurance, "Other"),
+         language = fct_relevel(language, "ENGLISH"),
+         marital_status = fct_relevel(marital_status, "MARRIED"),
+         race = fct_relevel(race, "WHITE"))
+
+setDT(data)
+```
+
+# Data Summary
+```{r}
+tbl_summary(data, by = "heart_failure")
+```
+
+# Data Summary with p-values
+```{r}
+#| output: false
+compare <- compareGroups(heart_failure ~ ., data = data)
+```
+```{r}
+createTable(compare) |> 
+  export2md(format = "html")
+```
+
