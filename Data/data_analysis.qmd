@@ -15,11 +15,9 @@ library(data.table)
 library(tidyverse)
 library(gtsummary)
 library(compareGroups)
+library(corrplot)
 
 set.seed(100)
-```
-
-```{r data}
 is_binary <- function(x) {
   if(is.numeric(x)){
     if(max(x, na.rm = TRUE) == 1 & min(x, na.rm = TRUE) == 0 & length(unique(x[!is.na(x)])) >= 2) {
@@ -31,25 +29,27 @@ is_binary <- function(x) {
     FALSE
   }
 }
+```
 
-data <- read_parquet("C:/Users/Winston/mimic-iv-2.2/mimic4_hosp_dataset_patients.parquet") |> 
-  select(-c(subject_id)) |> 
+
+```{r data}
+data <- read_parquet("C:/Users/Winston/mimic-iv-2.2/dataset/mimic4-hosp_hf-cleaned_categorical.parquet") |> 
+  select(-subject_id) |>
   mutate(across(where(is.character), as.factor),
-         across(where(is_binary), as.factor),
-         # Set largest groups as reference
-         gender = fct_relevel(gender, "F"),
-         insurance = fct_relevel(insurance, "Other"),
-         language = fct_relevel(language, "ENGLISH"),
-         marital_status = fct_relevel(marital_status, "MARRIED"),
-         race = fct_relevel(race, "WHITE"))
-
-setDT(data)
+         across(where(is_binary), as.factor))
 ```
 
-# Data Summary
-```{r}
-tbl_summary(data, by = "heart_failure")
+
+# Missing Values
+
+```{r missing_values}
+data_na <- data %>% 
+  mutate(across(-heart_failure, is.na),
+         across(-heart_failure, as.factor))
+
+tbl_summary(data_na, by = "heart_failure")
 ```
+
 
 # Data Summary with p-values
 ```{r}
@@ -59,5 +59,47 @@ compare <- compareGroups(heart_failure ~ ., data = data)
 ```{r}
 createTable(compare) |> 
   export2md(format = "html")
+```
+
+# Correlations
+
+```{r}
+corrplot(cor(data[, .SD, .SDcols = is.numeric], 
+             use = "pairwise.complete.obs", 
+             method = "spearman")
+         )
+```
+
+# Logistic Regression
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(arrow)
+train <- read_parquet("C:/Users/Winston/mimic-iv-2.2/train.parquet") |> 
+  mutate(heart_failure = factor(heart_failure, levels=c("0", "1")))
+test <- read_parquet("C:/Users/Winston/mimic-iv-2.2/test.parquet") |> 
+  mutate(heart_failure = factor(heart_failure, levels=c("0", "1")))
+```
+
+```{r}
+m <- logistic_reg() |> 
+  fit(as.factor(heart_failure) ~ furosemide + age + atrial_fibrillation + lisinopril + metoprolol_succinate + rdw + hypertension + bun + ckd + carvedilol, 
+         data = train)
+```
+
+
+```{r}
+res <- predict(m, test) %>% 
+  bind_cols(predict(m, test, type = "prob")) %>% 
+  bind_cols(test %>% 
+              select(heart_failure))
+```
+
+```{r}
+roc_auc_vec()
+```
+```{r}
+specificity_vec(test$heart_failure, res$.pred_class)
 ```
 

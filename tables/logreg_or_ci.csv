@@ -1,0 +1,11 @@
+Predictor,Coefficient,OR,95% CI Lower,95% CI Upper
+furosemide,2.161,8.684,7.688,9.862
+age,0.040,1.04,1.034,1.043
+atrial_fibrillation,0.988,2.687,2.393,3.315
+lisinopril,0.793,2.209,1.816,2.273
+metoprolol_succinate,1.037,2.822,2.685,3.316
+hypertension,-0.619,0.539,0.492,0.605
+rdw,0.105,1.111,1.056,1.125
+bun,0.014,1.015,1.012,1.018
+ckd,0.581,1.789,1.58,1.879
+carvedilol,1.646,5.184,4.769,10.652
